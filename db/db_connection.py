@@ -7,7 +7,7 @@ def get_connection():
             host="localhost",
             user="root",
             password="Pavan@8010",
-            database="gym_db",
+            database="gym_management",
             port=3306,
             connect_timeout=3
         )

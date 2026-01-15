@@ -15,7 +15,7 @@ ENTRY_WIDTH = 30
 TEXT_WIDTH = 22
 
 
-def show_member(content_frame, MAIN_BG):
+def show_staff(content_frame, MAIN_BG):
 
     for widget in content_frame.winfo_children():
         widget.destroy()
@@ -31,24 +31,27 @@ def show_member(content_frame, MAIN_BG):
     # -------- TITLE --------
     tk.Label(
         card,
-        text="Add Member",
-        font=("Segoe UI", 12, "bold"),
+        text="Add Staff",
+        font=("Segoe UI", 18, "bold"),
         bg=CARD_BG,
         fg="#2F2F8F"
-    ).pack(pady=10)
+    ).pack(pady=15)
 
     # -------- FORM --------
     form_frame = tk.Frame(card, bg=CARD_BG)
-    form_frame.pack(padx=25, pady=10)
+    form_frame.pack(padx=30, pady=10)
 
-    # helper → label + entry (same spacing everywhere)
     def label_entry(parent, text):
-        tk.Label(parent, text=text, bg=CARD_BG)\
-            .pack(anchor="w")
-        tk.Entry(parent,width=ENTRY_WIDTH,font=("Segoe UI", 12), **ENTRY_STYLE
-                 ).pack(anchor="w", pady=(2, 14), ipady=4)  # ⬅️ increases height
+        tk.Label(parent, text=text, bg=CARD_BG).pack(anchor="w")
+        tk.Entry(parent, width=ENTRY_WIDTH, **ENTRY_STYLE)\
+            .pack(anchor="w", pady=(2, 10))
 
-       
+    def label_dropdown(parent, text, values):
+        tk.Label(parent, text=text, bg=CARD_BG).pack(anchor="w")
+        var = tk.StringVar(value=values[0])
+        tk.OptionMenu(parent, var, *values)\
+            .pack(anchor="w", fill="x", pady=(2, 10))
+
     # -------- LEFT --------
     left = tk.Frame(form_frame, bg=CARD_BG)
     left.grid(row=0, column=0, padx=25, sticky="n")
@@ -57,20 +60,14 @@ def show_member(content_frame, MAIN_BG):
 
     tk.Label(left, text="Gender *", bg=CARD_BG).pack(anchor="w")
     gender = tk.StringVar(value="Male")
-    tk.Radiobutton(left, text="Male", variable=gender, value="Male", bg=CARD_BG)\
-        .pack(anchor="w")
+    tk.Radiobutton(left, text="Male", variable=gender, value="Male", bg=CARD_BG).pack(anchor="w")
     tk.Radiobutton(left, text="Female", variable=gender, value="Female", bg=CARD_BG)\
         .pack(anchor="w", pady=(0, 10))
 
     label_entry(left, "Email *")
     label_entry(left, "Join Date *")
+    label_dropdown(left, "City *", ["Select City", "Pune", "Mumbai", "Nagpur"])
 
-    tk.Label(left, text="Membership Type *", bg=CARD_BG).pack(anchor="w")
-    tk.OptionMenu(
-        left,
-        tk.StringVar(value="Monthly"),
-        "Monthly", "Quarterly", "Yearly"
-    ).pack(anchor="w", fill="x", pady=(2, 10))
 
     # -------- RIGHT --------
     right = tk.Frame(form_frame, bg=CARD_BG)
@@ -78,21 +75,10 @@ def show_member(content_frame, MAIN_BG):
 
     label_entry(right, "Last Name *")
     label_entry(right, "Date of Birth *")
-    label_entry(right, "Contact No *")
-    label_entry(right, "Time *")
+    label_entry(right, "Contact No. *")
 
-    tk.Label(right, text="Address *", bg=CARD_BG).pack(anchor="w")
-    tk.Text(
-        right,
-        width=TEXT_WIDTH,
-        height=4,
-        relief="solid",
-        bd=1,
-        highlightthickness=1,
-        highlightbackground="#B0B0B0",
-        highlightcolor="#1E90FF"
-    ).pack(anchor="w", pady=(2, 10))
-
+    label_dropdown(right, "State *", ["Select State", "Maharashtra", "Gujarat", "Karnataka"])
+    
     # -------- BUTTONS --------
     btns = tk.Frame(card, bg=CARD_BG)
     btns.pack(pady=20)
@@ -100,7 +86,7 @@ def show_member(content_frame, MAIN_BG):
     tk.Button(
         btns,
         text="Save",
-        width=12,
+        width=10,
         bg="#3A2D8F",
         fg="white"
     ).grid(row=0, column=0, padx=10)
@@ -108,11 +94,11 @@ def show_member(content_frame, MAIN_BG):
     tk.Button(
         btns,
         text="Reset",
-        width=12
+        width=10
     ).grid(row=0, column=1, padx=10)
 
     tk.Button(
         btns,
-        text="View All Members",
-        width=18
+        text="View All Staff",
+        width=16
     ).grid(row=0, column=2, padx=10)

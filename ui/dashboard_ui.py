@@ -1,7 +1,9 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from datetime import datetime
-from ui import new_member
+from ui.dashboard_page import show_dashboard
+from ui import new_member, new_staff, equipments, search_member, delete_member
+
 
 
 # ---------------- MAIN WINDOW ----------------
@@ -84,78 +86,6 @@ def set_active(btn):
         active_btn.config(bg=BTN_BG)
     btn.config(bg=BTN_HOVER)
     active_btn = btn
-# ---------------- PAGE FUNCTIONS ----------------
-
-def info_card(parent, title, value):
-    card = tk.Frame(parent, bg="white", width=220, height=110)
-    card.pack(side="left", padx=15)
-    card.pack_propagate(False)
-
-    tk.Label(card, text=title, bg="white",
-             fg="#555", font=("Segoe UI", 11)).pack(pady=(20, 5))
-    tk.Label(card, text=value, bg="white",
-             fg="#2B2B2B", font=("Segoe UI", 22, "bold")).pack()
-
-def show_dashboard():
-    clear_content()
-
-    cards_frame = tk.Frame(content_frame, bg=MAIN_BG)
-    cards_frame.pack(fill="x", pady=10)
-
-    info_card(cards_frame, "Total Members", "120")
-    info_card(cards_frame, "Active Members", "95")
-    info_card(cards_frame, "Inactive Members", "25")
-
-
-def show_member():
-    clear_content()
-    tk.Label(
-        content_frame,
-        text="NEW MEMBER PAGE",
-        font=("Segoe UI", 24, "bold"),
-        bg=MAIN_BG
-    ).pack(pady=50)
-
-
-def show_staff():
-    clear_content()
-    tk.Label(
-        content_frame,
-        text="STAFF PAGE",
-        font=("Segoe UI", 24, "bold"),
-        bg=MAIN_BG
-    ).pack(pady=50)
-
-
-def show_equipment():
-    clear_content()
-    tk.Label(
-        content_frame,
-        text="EQUIPMENT PAGE",
-        font=("Segoe UI", 24, "bold"),
-        bg=MAIN_BG
-    ).pack(pady=50)
-
-
-def show_search():
-    clear_content()
-    tk.Label(
-        content_frame,
-        text="SEARCH MEMBER PAGE",
-        font=("Segoe UI", 24, "bold"),
-        bg=MAIN_BG
-    ).pack(pady=50)
-
-
-def show_delete():
-    clear_content()
-    tk.Label(
-        content_frame,
-        text="DELETE MEMBER PAGE",
-        font=("Segoe UI", 24, "bold"),
-        bg=MAIN_BG
-    ).pack(pady=50)
-
 
 # ---------------- ICON LOADER ----------------
 def load_icon(path):
@@ -206,7 +136,12 @@ def menu_button(text, icon, command, is_active=False):
 
 
 # ---------------- MENU ITEMS ----------------
-menu_button("Dashboard", icons["dashboard"], show_dashboard, True)
+menu_button(
+    "Dashboard",
+    icons["dashboard"],
+    lambda: show_dashboard(content_frame, MAIN_BG),
+    True
+)
 
 menu_button(
     "New Member",
@@ -214,15 +149,27 @@ menu_button(
     lambda: new_member.show_member(content_frame, MAIN_BG)
 )
 
-menu_button("New Staff", icons["staff"], show_staff)
-menu_button("Equipment", icons["equipment"], show_equipment)
-menu_button("Search Member", icons["search"], show_search)
-menu_button("Delete Member", icons["delete"], show_delete)
+menu_button(
+    "New Staff",
+    icons["staff"],
+    lambda: new_staff.show_staff(content_frame, MAIN_BG)
+)
+
+menu_button("Equipment", 
+            icons["equipment"],  
+            lambda: equipments.show_equipment(content_frame, MAIN_BG))
+
+menu_button("Search Member", 
+            icons["search"], 
+            lambda: search_member.show_search(content_frame, MAIN_BG))
+menu_button("Delete Member", icons["delete"],
+            lambda: delete_member.show_delete(content_frame, MAIN_BG))
 
 tk.Label(sidebar, bg=SIDEBAR_BG).pack(expand=True)
 
 menu_button("Logout", icons["logout"], root.quit)
 
-show_dashboard()
+show_dashboard(content_frame, MAIN_BG)
+
 
 root.mainloop()
