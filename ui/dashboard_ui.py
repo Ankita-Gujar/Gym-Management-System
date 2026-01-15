@@ -33,79 +33,12 @@ except:
     tk.Label(sidebar, text="IRON\nFITNESS", fg=ACCENT,
              bg=SIDEBAR_BG, font=("Arial", 15, "bold")).pack(pady=20)
 
-# ---------------- ICON LOADER ----------------
-def load_icon(path):
-    img = Image.open(path).resize((22, 22))
-    return ImageTk.PhotoImage(img)
-
-icons = {
-    "dashboard": load_icon("imgs/icons/dashboard.png"),
-    "member": load_icon("imgs/icons/user.png"),
-    "staff": load_icon("imgs/icons/team.png"),
-    "equipment": load_icon("imgs/icons/dumbbell.png"),
-    "search": load_icon("imgs/icons/search.png"),
-    "delete": load_icon("imgs/icons/delete.png"),
-    "logout": load_icon("imgs/icons/logout.png")
-}
-
-active_btn = None
-
-def set_active(btn):
-    global active_btn
-    if active_btn:
-        active_btn.config(bg=BTN_BG)
-    btn.config(bg=BTN_HOVER)
-    active_btn = btn
-
-
-# ---------------- SIDEBAR BUTTON FUNCTION ----------------
-def menu_button(text, icon, is_active=False):
-    global active_btn
-
-    btn = tk.Button(
-        sidebar,
-        text="   " + text,
-        image=icon,
-        compound="left",
-        bg=BTN_BG,
-        fg=TEXT_COLOR,
-        font=("Segoe UI", 11),
-        relief="flat",
-        anchor="w",
-        padx=20,
-        pady=12,
-        cursor="hand2",
-        command=lambda: set_active(btn)
-    )
-    btn.pack(fill="x", pady=6)
-
-    btn.bind("<Enter>", lambda e: btn.config(bg=BTN_HOVER if btn != active_btn else BTN_HOVER))
-    btn.bind("<Leave>", lambda e: btn.config(bg=BTN_BG if btn != active_btn else BTN_HOVER))
-
-    if is_active:
-        btn.config(bg=BTN_HOVER)
-        active_btn = btn
-
-    return btn
-
-
-# ---------------- MENU ITEMS ----------------
-menu_button("Dashboard", icons["dashboard"], is_active=True)
-menu_button("New Member", icons["member"]).config(command=lambda: [set_active(active_btn), new_member.show_member(content_frame, MAIN_BG)])
-menu_button("New Staff", icons["staff"])
-menu_button("Equipment", icons["equipment"])
-menu_button("Search Member", icons["search"])
-menu_button("Delete Member", icons["delete"])
-
-tk.Label(sidebar, bg=SIDEBAR_BG).pack(expand=True)
-
-menu_button("Logout", icons["logout"])
 
 # ---------------- MAIN AREA ----------------
 main_area = tk.Frame(root, bg=MAIN_BG)
 main_area.pack(side="right", fill="both", expand=True)
 
-# ---------------- HEADER BACKGROUND ----------------
+ #---------------- HEADER BACKGROUND ----------------
 header_frame = tk.Frame(main_area, bg=PRIMARY, height=120)
 header_frame.pack(fill="x")
 
@@ -135,7 +68,7 @@ date_lbl = tk.Label(
 date_lbl.pack()
 update_date()
 
-# ---------------- DASHBOARD CONTENT ----------------
+## ---------------- DASHBOARD CONTENT ----------------
 content_frame = tk.Frame(main_area, bg=MAIN_BG)
 content_frame.pack(fill="both", expand=True, padx=30, pady=20)
 
@@ -143,7 +76,25 @@ def clear_content():
     for widget in content_frame.winfo_children():
         widget.destroy()
 
+active_btn = None
+
+def set_active(btn):
+    global active_btn
+    if active_btn:
+        active_btn.config(bg=BTN_BG)
+    btn.config(bg=BTN_HOVER)
+    active_btn = btn
 # ---------------- PAGE FUNCTIONS ----------------
+
+def info_card(parent, title, value):
+    card = tk.Frame(parent, bg="white", width=220, height=110)
+    card.pack(side="left", padx=15)
+    card.pack_propagate(False)
+
+    tk.Label(card, text=title, bg="white",
+             fg="#555", font=("Segoe UI", 11)).pack(pady=(20, 5))
+    tk.Label(card, text=value, bg="white",
+             fg="#2B2B2B", font=("Segoe UI", 22, "bold")).pack()
 
 def show_dashboard():
     clear_content()
@@ -206,38 +157,71 @@ def show_delete():
     ).pack(pady=50)
 
 
-def info_card(parent, title, value):
-    card = tk.Frame(parent, bg="white", width=220, height=110)
-    card.pack(side="left", padx=15)
-    card.pack_propagate(False)
+# ---------------- ICON LOADER ----------------
+def load_icon(path):
+    img = Image.open(path).resize((22, 22))
+    return ImageTk.PhotoImage(img)
 
-    tk.Label(card, text=title, bg="white",
-             fg="#555", font=("Segoe UI", 11)).pack(pady=(20, 5))
-    tk.Label(card, text=value, bg="white",
-             fg="#2B2B2B", font=("Segoe UI", 22, "bold")).pack()
+icons = {
+    "dashboard": load_icon("imgs/icons/dashboard.png"),
+    "member": load_icon("imgs/icons/user.png"),
+    "staff": load_icon("imgs/icons/team.png"),
+    "equipment": load_icon("imgs/icons/dumbbell.png"),
+    "search": load_icon("imgs/icons/search.png"),
+    "delete": load_icon("imgs/icons/delete.png"),
+    "logout": load_icon("imgs/icons/logout.png")
+}
 
-# ---------------- SUMMARY CARDS ----------------
-def show_dashboard():
-    clear_content()
 
-    cards_frame = tk.Frame(content_frame, bg=MAIN_BG)
-    cards_frame.pack(fill="x", pady=10)
+# ---------------- SIDEBAR BUTTON FUNCTION ----------------
+def menu_button(text, icon, command, is_active=False):
+    global active_btn
 
-    info_card(cards_frame, "Total Members", "120")
-    info_card(cards_frame, "Active Members", "95")
-    info_card(cards_frame, "Inactive Members", "25")
+    btn = tk.Button(
+        sidebar,
+        text="   " + text,
+        image=icon,
+        compound="left",
+        bg=BTN_BG,
+        fg=TEXT_COLOR,
+        font=("Segoe UI", 11),
+        relief="flat",
+        anchor="w",
+        padx=20,
+        pady=12,
+        cursor="hand2",
+        command=lambda: (set_active(btn), command())
+    )
+    btn.pack(fill="x", pady=6)
 
-    chart_frame = tk.Frame(content_frame, bg="white", height=300)
-    chart_frame.pack(fill="x", pady=20)
-    chart_frame.pack_propagate(False)
+    btn.bind("<Enter>", lambda e: btn.config(bg=BTN_HOVER))
+    btn.bind("<Leave>", lambda e: btn.config(bg=BTN_BG if btn != active_btn else BTN_HOVER))
 
-    tk.Label(
-        chart_frame,
-        text="Monthly Attendance Progress",
-        bg="white",
-        fg="#2B2B2B",
-        font=("Segoe UI", 13, "bold")
-    ).pack(anchor="w", padx=20, pady=10)
+    if is_active:
+        btn.config(bg=BTN_HOVER)
+        active_btn = btn
+
+    return btn
+
+
+
+# ---------------- MENU ITEMS ----------------
+menu_button("Dashboard", icons["dashboard"], show_dashboard, True)
+
+menu_button(
+    "New Member",
+    icons["member"],
+    lambda: new_member.show_member(content_frame, MAIN_BG)
+)
+
+menu_button("New Staff", icons["staff"], show_staff)
+menu_button("Equipment", icons["equipment"], show_equipment)
+menu_button("Search Member", icons["search"], show_search)
+menu_button("Delete Member", icons["delete"], show_delete)
+
+tk.Label(sidebar, bg=SIDEBAR_BG).pack(expand=True)
+
+menu_button("Logout", icons["logout"], root.quit)
 
 show_dashboard()
 
