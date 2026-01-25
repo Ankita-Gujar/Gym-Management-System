@@ -1,93 +1,187 @@
 import tkinter as tk
-from tkcalendar import DateEntry
+from tkcalendar import Calendar
+from PIL import Image, ImageTk   # pip install pillow
+
+ENTRY_STYLE = {
+    "relief": "solid",
+    "bd": 1,
+    "highlightthickness": 1,
+    "highlightbackground": "#B0B0B0",
+    "highlightcolor": "#1E90FF"
+}
+
+BORDER_COLOR = "#B0B3D6"
+CARD_BG = "#E6E7F5"
+
+
+def open_calendar(icon_btn, entry):
+    cal_win = tk.Toplevel()
+    cal_win.overrideredirect(True)
+    cal_win.grab_set()
+    cal_win.configure(bg="white")
+
+    x = icon_btn.winfo_rootx()
+    y = icon_btn.winfo_rooty() + icon_btn.winfo_height()
+    cal_win.geometry(f"+{x}+{y}")
+
+    # Header (Cancel Button)
+    header = tk.Frame(cal_win, bg="white")
+    header.pack(fill="x")
+
+    cancel_btn = tk.Button(
+        header,
+        text="✕",
+        font=("Segoe UI", 10, "bold"),
+        bg="white",
+        fg="red",
+        bd=0,
+        cursor="hand2",
+        command=cal_win.destroy
+    )
+    cancel_btn.pack(side="right", padx=6, pady=4)
+
+    # Calendar
+    cal = Calendar(
+        cal_win,
+        date_pattern="yyyy-mm-dd",
+        background="black",
+        foreground="white",
+        headersbackground="black",
+        headersforeground="white",
+        selectbackground="black"
+    )
+    cal.pack(padx=6, pady=6)
+
+    def pick(event=None):
+        entry.delete(0, tk.END)
+        entry.insert(0, cal.get_date())
+        cal_win.destroy()
+
+    cal.bind("<<CalendarSelected>>", pick)
+
+
+def date_entry(parent):
+    # Border frame (entry style)
+    outer = tk.Frame(
+        parent,**ENTRY_STYLE,
+        bg="#B0B0B0",
+        padx=0,
+        pady=0
+    )
+    outer.pack(fill="x")
+
+    # Inner white area
+    inner = tk.Frame(outer, bg="white")
+    inner.pack(fill="both")
+
+    entry = tk.Entry(
+        inner,
+        font=("Segoe UI", 10),
+        relief="flat",
+        bd=0
+    )
+    entry.pack(side="left", fill="x", expand=True, ipady=6, padx=(6, 0))
+
+    # Calendar image
+    img = Image.open("imgs/icons/calendar.png")
+    img = img.resize((18, 18))
+    calendar_icon = ImageTk.PhotoImage(img)
+
+    btn = tk.Button(
+        inner,
+        image=calendar_icon,
+        bg="white",
+        bd=0,
+        cursor="hand2",
+        command=lambda: open_calendar(btn, entry)
+    )
+    btn.image = calendar_icon
+    btn.pack(side="right", padx=6)
+
+    # Focus effect (blue border)
+    def on_focus_in(e):
+        outer.config(bg="#1E90FF")
+
+    def on_focus_out(e):
+        outer.config(bg="#B0B0B0")
+
+    entry.bind("<FocusIn>", on_focus_in)
+    entry.bind("<FocusOut>", on_focus_out)
+
+    return entry
+
 
 
 def show_equipment(content_frame, MAIN_BG):
-    # Clear old page
-    for widget in content_frame.winfo_children():
-        widget.destroy()
 
-    # ---------------- CARD BORDER ----------------
-    card_border = tk.Frame(
-        content_frame,
-        bg="#B0B3D6",
-        padx=2,
-        pady=2
-    )
+    for w in content_frame.winfo_children():
+        w.destroy()
+
+    card_border = tk.Frame(content_frame, bg=BORDER_COLOR, padx=2, pady=2)
     card_border.place(relx=0.5, rely=0.5, anchor="center")
 
-    # ---------------- CARD BODY ----------------
-    card = tk.Frame(
-        card_border,
-        bg="#E6E7F5",
-        width=420,
-        height=520
-    )
+    card = tk.Frame(card_border, bg=CARD_BG, width=450, height=500)
     card.pack()
     card.pack_propagate(False)
 
-    # ---------------- TITLE ----------------
     tk.Label(
         card,
         text="Equipment",
-        bg="#E6E7F5",
-        fg="#3A2D8F",
-        font=("Segoe UI", 16, "bold")
-    ).pack(pady=15)
+        font=("Segoe UI", 18, "bold"),
+        bg=CARD_BG,
+        fg="#2F2F8F"
+    ).pack(pady=(12, 8))
 
-    # ---------------- FORM ----------------
-    form = tk.Frame(card, bg="#E6E7F5")
-    form.pack(padx=25, fill="both", expand=True)
+    form = tk.Frame(card, bg=CARD_BG)
+    form.pack(padx=30, pady=(5, 0), fill="both", expand=True)
 
-    def field(label, widget):
+    def field(label, widget, ipady=0):
         tk.Label(
             form,
             text=label,
-            bg="#E6E7F5",
+            bg=CARD_BG,
             font=("Segoe UI", 10)
-        ).pack(anchor="w", pady=(8, 2))
-        widget.pack(fill="x")
+        ).pack(anchor="w", pady=(6, 2))
 
-    # ---------------- FIELDS ----------------
-    entry_name = tk.Entry(form, font=("Segoe UI", 10))
-    field("Equipment Name *", entry_name)
+        widget.pack(fill="x", ipady=ipady)
 
-    txt_desc = tk.Text(form, height=4, font=("Segoe UI", 10))
+    field("Equipment Name *",
+          tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE), 4)
+
+    txt_desc = tk.Text(
+        form,
+        height=4,
+        relief="solid",
+        bd=1,
+        highlightthickness=1,
+        highlightbackground="#B0B0B0",
+        highlightcolor="#1E90FF"
+    )
     field("Description *", txt_desc)
 
-    entry_muscles = tk.Entry(form, font=("Segoe UI", 10))
-    field("Muscles Used *", entry_muscles)
+    field("Muscles Used *",
+          tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE), 4)
 
-    delivery_date = DateEntry(
+    tk.Label(
         form,
-        font=("Segoe UI", 10),
-        date_pattern="yyyy-mm-dd"
-    )
-    field("Delivery Date *", delivery_date)
+        text="Delivery Date *",
+        bg=CARD_BG,
+        font=("Segoe UI", 10)
+    ).pack(anchor="w", pady=(6, 2))
 
-    entry_cost = tk.Entry(form, font=("Segoe UI", 10))
-    field("Cost *", entry_cost)
+    date_entry(form)
 
-    # ---------------- BUTTONS ----------------
-    btn_frame = tk.Frame(card, bg="#E6E7F5")
-    btn_frame.pack(pady=15)
+    field("Cost *",
+          tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE), 4)
 
-    tk.Button(
-        btn_frame,
-        text="Save",
-        bg="#3A2D8F",
-        fg="white",
-        width=10
-    ).grid(row=0, column=0, padx=6)
+    btn_frame = tk.Frame(card, bg=CARD_BG)
+    btn_frame.pack(pady=(8, 12))
 
-    tk.Button(
-        btn_frame,
-        text="Reset",
-        width=10
-    ).grid(row=0, column=1, padx=6)
+    tk.Button(btn_frame, text="Save", width=10,
+              bg="#3A2D8F", fg="white").grid(row=0, column=0, padx=6)
 
-    tk.Button(
-        btn_frame,
-        text="View All Equipment",
-        width=18
-    ).grid(row=0, column=2, padx=6)
+    tk.Button(btn_frame, text="Reset", width=10)\
+        .grid(row=0, column=1, padx=6)
+
+    tk.Button(btn_frame, text="View All Equipments", width=18)\
+        .grid(row=0, column=2, padx=6)

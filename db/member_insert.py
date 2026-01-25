@@ -1,0 +1,18 @@
+from db.db_connection import get_connection
+
+
+def insert_member(data):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        INSERT INTO members
+        (first_name, last_name, gender, dob, email, contact, join_date, membership, address)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+    """
+
+    cursor.execute(query, data)
+    conn.commit()
+
+    cursor.close()
+    conn.close()

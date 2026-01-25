@@ -1,12 +1,13 @@
-from db.db_connection import get_connection   # ✅ REQUIRED IMPORT
+from db.db_connection import get_connection
 
 
-def search_member_by_email(email):
+def get_all_staff():
     conn = get_connection()
     cursor = conn.cursor()
 
     query = """
         SELECT
+            id,
             first_name,
             last_name,
             gender,
@@ -14,16 +15,16 @@ def search_member_by_email(email):
             email,
             contact,
             join_date,
-            membership,
-            address
-        FROM members
-        WHERE email = %s
+            state,
+            city
+        FROM staff
+        ORDER BY id DESC
     """
 
-    cursor.execute(query, (email,))
-    results = cursor.fetchall()
+    cursor.execute(query)
+    records = cursor.fetchall()
 
     cursor.close()
     conn.close()
 
-    return results
+    return records

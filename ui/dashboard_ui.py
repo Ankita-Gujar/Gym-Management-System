@@ -155,7 +155,7 @@ menu_button(
     lambda: new_staff.show_staff(content_frame, MAIN_BG)
 )
 
-menu_button("Equipment", 
+menu_button("Equipments", 
             icons["equipment"],  
             lambda: equipments.show_equipment(content_frame, MAIN_BG))
 
