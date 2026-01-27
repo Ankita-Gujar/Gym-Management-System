@@ -193,7 +193,7 @@ def show_member(content_frame, MAIN_BG):
 
         data = (
             fname, lname, gender.get(), dob, email,
-            contact, join, membership_var.get(), address
+            contact, join,time,membership_var.get(), address
         )
 
         try:

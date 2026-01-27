@@ -7,7 +7,7 @@ def add_equipment(data):
     query = """
         INSERT INTO equipment
         (equipment_name, description, muscles_used, delivery_date, cost)
-        VALUES (%s, %s, %s, %s, %s)"""
+        VALUES (%s, %s, %s, %s, %s) """
 
     cursor.execute(query, data)
     conn.commit()

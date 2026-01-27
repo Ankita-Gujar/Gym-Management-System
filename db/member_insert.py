@@ -7,8 +7,8 @@ def insert_member(data):
 
         query = """
             INSERT INTO members
-            (first_name, last_name, gender, dob, email, contact, join_date, membership, address)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            (first_name, last_name, gender, dob, email, contact, join_date, time,membership, address)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
         cursor.execute(query, data)
         conn.commit()

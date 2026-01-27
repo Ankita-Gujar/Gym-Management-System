@@ -5,21 +5,8 @@ def get_all_staff():
     conn = get_connection()
     cursor = conn.cursor()
 
-    query = """
-        SELECT
-            id,
-            first_name,
-            last_name,
-            gender,
-            dob,
-            email,
-            contact,
-            join_date,
-            state,
-            city
-        FROM staff
-        ORDER BY id DESC
-    """
+    query = """ SELECT * FROM staff ORDER BY id ASC;"""
+
 
     cursor.execute(query)
     records = cursor.fetchall()

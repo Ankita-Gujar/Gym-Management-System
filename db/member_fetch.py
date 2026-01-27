@@ -5,21 +5,8 @@ def get_all_members():
     conn = get_connection()
     cursor = conn.cursor()
 
-    query = """
-        SELECT
-            id,
-            first_name,
-            last_name,
-            gender,
-            dob,
-            email,
-            contact,
-            join_date,
-            membership,
-            address
-        FROM members
-        ORDER BY id DESC
-    """
+    query = """ SELECT * FROM members ORDER BY id ASC;"""
+
 
     cursor.execute(query)
     records = cursor.fetchall()

@@ -29,7 +29,7 @@ def open_view_all_members():
     # -------- TREEVIEW --------
     columns = (
         "SR", "First Name", "Last Name", "Gender", "DOB",
-        "Email", "Contact", "Join Date", "Membership", "Address"
+        "Email", "Contact", "Join Date", "time","Membership", "Address"
     )
 
     tree = ttk.Treeview(
