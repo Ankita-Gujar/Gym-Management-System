@@ -1,4 +1,4 @@
-from db.db_connection import get_connection   # ✅ REQUIRED IMPORT
+from db.db_connection import get_connection  
 
 
 def search_member_by_email(email):

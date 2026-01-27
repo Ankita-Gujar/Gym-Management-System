@@ -69,13 +69,13 @@ tk.Label(card, text="Password*", bg=CARD_BG).pack(anchor="w", padx=50, pady=(10,
 pwd_frame = tk.Frame(card, bg="white", bd=1, relief="solid")
 pwd_frame.pack(padx=50, fill="x", ipady=6, pady=5)
 
-# 🔑 Key icon
+# Key icon
 tk.Label(pwd_frame, image=key_icon, bg="white").pack(side="left", padx=8)
 
 password_entry = tk.Entry(pwd_frame, bd=0, show="*", font=("Poppins", 11))
 password_entry.pack(side="left", fill="x", expand=True)
 
-# 👁 Eye button
+# Eye button
 eye_btn = tk.Button(
     pwd_frame,
     image=eye_close,

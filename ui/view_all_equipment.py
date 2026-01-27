@@ -1,17 +1,18 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from db.staff_fetch import get_all_staff
+from db.equipment_fetch import get_all_equipment
 
 
-def open_view_all_staff():
+
+def open_view_all_equipment():
     win = tk.Toplevel()
-    win.title("View All Staff")
-    win.geometry("1100x450")
+    win.title("View All Equipments")
+    win.geometry("1000x450")
     win.configure(bg="#F5F6FA")
 
     tk.Label(
         win,
-        text="All Staff",
+        text="All Equipments",
         font=("Segoe UI", 18, "bold"),
         bg="#F5F6FA",
         fg="#2F2F8F"
@@ -24,8 +25,8 @@ def open_view_all_staff():
     scroll_y = tk.Scrollbar(frame, orient="vertical")
 
     columns = (
-        "SR", "First Name", "Last Name", "Gender", "DOB",
-        "Email", "Contact", "Join Date", "State", "City"
+        "SR", "Name", "Description", "Muscles",
+        "Delivery Date", "Cost"
     )
 
     tree = ttk.Treeview(
@@ -48,14 +49,14 @@ def open_view_all_staff():
 
     for col in columns[1:]:
         tree.heading(col, text=col)
-        tree.column(col, width=120, anchor="center")
+        tree.column(col, width=150, anchor="center")
 
     def load_data():
         tree.delete(*tree.get_children())
         try:
-            records = get_all_staff()
+            records = get_all_equipment()
             for i, row in enumerate(records, start=1):
-                tree.insert("", "end", values=(i, *row[1:]))  
+                tree.insert("", "end", values=(i, row[1], row[2], row[3], row[4], row[5]))
         except Exception as e:
             messagebox.showerror("Error", str(e))
 

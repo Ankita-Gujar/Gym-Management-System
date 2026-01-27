@@ -98,7 +98,7 @@ def show_search(content_frame, MAIN_BG):
     table_frame.grid_rowconfigure(0, weight=1)
     table_frame.grid_columnconfigure(0, weight=1)
 
-    # ================= SEARCH FUNCTION (CORRECT PLACE) =================
+    # SEARCH FUNCTION
     def search_action():
         tree.delete(*tree.get_children())
 

@@ -1,6 +1,11 @@
 import tkinter as tk
+from tkinter import messagebox
 from tkcalendar import Calendar
-from PIL import Image, ImageTk   # pip install pillow
+from PIL import Image, ImageTk  
+from db.add_equipments import add_equipment
+from ui.view_all_equipment import open_view_all_equipment
+
+
 
 ENTRY_STYLE = {
     "relief": "solid",
@@ -24,31 +29,12 @@ def open_calendar(icon_btn, entry):
     y = icon_btn.winfo_rooty() + icon_btn.winfo_height()
     cal_win.geometry(f"+{x}+{y}")
 
-    # Header (Cancel Button)
-    header = tk.Frame(cal_win, bg="white")
-    header.pack(fill="x")
-
-    cancel_btn = tk.Button(
-        header,
-        text="✕",
-        font=("Segoe UI", 10, "bold"),
-        bg="white",
-        fg="red",
-        bd=0,
-        cursor="hand2",
-        command=cal_win.destroy
-    )
-    cancel_btn.pack(side="right", padx=6, pady=4)
-
-    # Calendar
     cal = Calendar(
         cal_win,
+        selectmode="day",
         date_pattern="yyyy-mm-dd",
-        background="black",
-        foreground="white",
-        headersbackground="black",
-        headersforeground="white",
-        selectbackground="black"
+        selectbackground="#3A2D8F",
+        selectforeground="white"
     )
     cal.pack(padx=6, pady=6)
 
@@ -61,16 +47,9 @@ def open_calendar(icon_btn, entry):
 
 
 def date_entry(parent):
-    # Border frame (entry style)
-    outer = tk.Frame(
-        parent,**ENTRY_STYLE,
-        bg="#B0B0B0",
-        padx=0,
-        pady=0
-    )
+    outer = tk.Frame(parent, **ENTRY_STYLE, bg="#B0B0B0")
     outer.pack(fill="x")
 
-    # Inner white area
     inner = tk.Frame(outer, bg="white")
     inner.pack(fill="both")
 
@@ -82,7 +61,6 @@ def date_entry(parent):
     )
     entry.pack(side="left", fill="x", expand=True, ipady=6, padx=(6, 0))
 
-    # Calendar image
     img = Image.open("imgs/icons/calendar.png")
     img = img.resize((18, 18))
     calendar_icon = ImageTk.PhotoImage(img)
@@ -98,7 +76,6 @@ def date_entry(parent):
     btn.image = calendar_icon
     btn.pack(side="right", padx=6)
 
-    # Focus effect (blue border)
     def on_focus_in(e):
         outer.config(bg="#1E90FF")
 
@@ -109,7 +86,6 @@ def date_entry(parent):
     entry.bind("<FocusOut>", on_focus_out)
 
     return entry
-
 
 
 def show_equipment(content_frame, MAIN_BG):
@@ -142,11 +118,10 @@ def show_equipment(content_frame, MAIN_BG):
             bg=CARD_BG,
             font=("Segoe UI", 10)
         ).pack(anchor="w", pady=(6, 2))
-
         widget.pack(fill="x", ipady=ipady)
 
-    field("Equipment Name *",
-          tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE), 4)
+    equip_name_entry = tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE)
+    field("Equipment Name *", equip_name_entry, 4)
 
     txt_desc = tk.Text(
         form,
@@ -159,8 +134,8 @@ def show_equipment(content_frame, MAIN_BG):
     )
     field("Description *", txt_desc)
 
-    field("Muscles Used *",
-          tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE), 4)
+    muscle_entry = tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE)
+    field("Muscles Used *", muscle_entry, 4)
 
     tk.Label(
         form,
@@ -169,19 +144,75 @@ def show_equipment(content_frame, MAIN_BG):
         font=("Segoe UI", 10)
     ).pack(anchor="w", pady=(6, 2))
 
-    date_entry(form)
+    date_ent = date_entry(form)
 
-    field("Cost *",
-          tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE), 4)
+    cost_entry = tk.Entry(form, font=("Segoe UI", 10), **ENTRY_STYLE)
+    field("Cost *", cost_entry, 4)
+
+    def validate_and_save():
+        if not equip_name_entry.get().strip():
+            messagebox.showerror("Validation Error", "Equipment Name is required")
+            return
+
+        if not txt_desc.get("1.0", tk.END).strip():
+            messagebox.showerror("Validation Error", "Description is required")
+            return
+
+        if not muscle_entry.get().strip():
+            messagebox.showerror("Validation Error", "Muscles Used is required")
+            return
+
+        if not date_ent.get().strip():
+            messagebox.showerror("Validation Error", "Delivery Date is required")
+            return
+
+        cost = cost_entry.get().strip()
+        if not cost.isdigit():
+            messagebox.showerror("Validation Error", "Cost must be numeric")
+            return
+
+        data = (
+            equip_name_entry.get().strip(),
+            txt_desc.get("1.0", tk.END).strip(),
+            muscle_entry.get().strip(),
+            date_ent.get().strip(),
+            int(cost)
+        )
+
+        try:
+            add_equipment(data)
+            messagebox.showinfo("Success", "Equipment saved successfully!")
+
+            # reset form
+            equip_name_entry.delete(0, tk.END)
+            txt_desc.delete("1.0", tk.END)
+            muscle_entry.delete(0, tk.END)
+            date_ent.delete(0, tk.END)
+            cost_entry.delete(0, tk.END)
+
+        except Exception as e:
+            messagebox.showerror("Database Error", str(e))
 
     btn_frame = tk.Frame(card, bg=CARD_BG)
     btn_frame.pack(pady=(8, 12))
 
-    tk.Button(btn_frame, text="Save", width=10,
-              bg="#3A2D8F", fg="white").grid(row=0, column=0, padx=6)
+    tk.Button(
+        btn_frame,
+        text="Save",
+        width=10,
+        bg="#3A2D8F",
+        fg="white",
+        command=validate_and_save
+    ).grid(row=0, column=0, padx=6)
 
     tk.Button(btn_frame, text="Reset", width=10)\
         .grid(row=0, column=1, padx=6)
 
-    tk.Button(btn_frame, text="View All Equipments", width=18)\
-        .grid(row=0, column=2, padx=6)
+    tk.Button(
+    btn_frame,
+    text="View All Equipments",
+    width=18,
+    command=open_view_all_equipment
+    ).grid(row=0, column=2, padx=6)
+
+

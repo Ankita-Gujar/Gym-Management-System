@@ -2,7 +2,7 @@ import pymysql
 
 def get_connection():
     try:
-        print("➡️ Connecting to database...")
+        print("Connecting to database...")
         conn = pymysql.connect(
             host="localhost",
             user="root",
@@ -11,9 +11,9 @@ def get_connection():
             port=3306,
             connect_timeout=3
         )
-        print("✅ Database connected")
+        print("Database connected")
         return conn
     except Exception as e:
-        print("❌ Database connection failed")
+        print("Database connection failed")
         print(e)
         return None

@@ -57,14 +57,14 @@ def open_view_all_members():
 
     tree.column("Address", width=220)
 
-    # -------- LOAD DATA --------
+  
     def load_data():
         tree.delete(*tree.get_children())
 
         try:
             records = get_all_members()
             for i, row in enumerate(records, start=1):
-                tree.insert("", "end", values=(i, *row[1:]))  # skip DB id
+                tree.insert("", "end", values=(i, *row[1:]))  
         except Exception as e:
             messagebox.showerror("Error", str(e))
 

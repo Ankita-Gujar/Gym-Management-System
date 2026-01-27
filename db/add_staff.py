@@ -7,8 +7,7 @@ def add_staff(data):
     query = """
         INSERT INTO staff
         (first_name, last_name, gender, dob, email, contact, join_date, state, city)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
     cursor.execute(query, data)
     conn.commit()
